@@ -16,6 +16,11 @@ class BunkaCommand < Thor
   def test(command, query='name:*')
     Bunka.test(command, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
   end
+	
+	desc 'testserverspec SERVERSPECFILE','test nodes with serverspec'
+	def testserverspec(serverspecfile)
+		Bunka.testserverspec(serverspecfile)
+	end
 end
 
 BunkaCommand.start

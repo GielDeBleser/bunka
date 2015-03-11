@@ -5,6 +5,7 @@ require 'bunka/chef'
 require 'bunka/helpers'
 require 'bunka/printers'
 require 'bunka/ssh'
+require 'bunka/serverspec'
 
 class Bunka
   class << self
@@ -24,5 +25,12 @@ class Bunka
 
       print_summary
     end
-  end
+
+		def testserverspec serverspecfile
+			@serverspecfile = serverspecfile
+
+			serverspecsetup		
+			
+		end
+	end
 end
