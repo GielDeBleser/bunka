@@ -20,11 +20,7 @@ class Bunka
 			hosts.each do |host|
 					puts "Run serverspec to #{host}"
 					ENV['TARGET_HOST'] = host
-					begin
-  					Rake::Task['spec'].invoke
-						rescue RuntimeError
-  						puts 'failed'
-					end
+  				Rake::Task['spec'].invoke
 			end
 		end
 	end
