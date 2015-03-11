@@ -2,25 +2,30 @@ require 'serverspec'
 require 'rspec/core/rake_task'
 require 'rake'
 require 'bunka/rake_spec'
+require 'bunka/spec_helper'
+require 'serverspec'
 
 class Bunka
 	class << self
 
 		def serverspecsetup
 			hosts = File.readlines(ENV['HOME']+'/servers/sandboxservers').each {|l| l.chomp!}
-			namespace :spec do
-  		task :all => hosts.map {|h| 'spec:' + h.split('.')[0] }
-  		hosts.each do |host|
-    		short_name = host.split('.')[0]
+  		#hosts.each do |host|
+    	#	short_name = host.split('.')[0]
 
-    	desc "Run serverspec to #{host}"
-    	RSpec::Core::RakeTask.new(short_name) do |t|
-      ENV['TARGET_HOST'] = host
-      t.pattern = @serverspecfile
-					end
-				end
+    	RSpec::Core::RakeTask.new(:spec) do |t|
+      t.pattern = ENV['HOME']+'/.serverspecfile.rb'
 			end
-			start_spec
+			
+			hosts.each do |host|
+					puts "Run serverspec to #{host}"
+					ENV['TARGET_HOST'] = host
+					begin
+  					Rake::Task['spec'].invoke
+						rescue RuntimeError
+  						puts 'failed'
+					end
+			end
 		end
 	end
 end
