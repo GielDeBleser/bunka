@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'bunka'
-require 'rubygems'
 require 'thor'
 
 class BunkaCommand < Thor
@@ -13,8 +12,20 @@ class BunkaCommand < Thor
   option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
   option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
   option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
-  def test(command, query='name:*')
+  def test(command, query = 'name:*')
     Bunka.test(command, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+  end
+  map '-ts' => :testserverspec
+
+  desc 'testserverspec SERVERSPECFILE', 'test nodes with serverspec'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
+  option :invert, type: :boolean, desc: 'invert matched results', default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
+  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of servers', default: '/.bunka/servers'
+  def testserverspec(serverspecfile)
+    Bunka.testserverspec(serverspecfile, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file']) 
   end
 end
 

@@ -17,4 +17,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'parallel'
   spec.add_dependency 'rake'
   spec.add_dependency 'thor'
+  spec.add_dependency 'process_shared'
 end

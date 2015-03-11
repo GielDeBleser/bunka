@@ -14,15 +14,15 @@ class Bunka
       print '*'.yellow
     end
 
-    def print_timeout_stream
-      timeout_output_stream.each do |output|
-        puts output.yellow
-      end
-    end
-
     def print_failed_stream
       failed_output_stream.each do |output|
         puts output.red
+      end
+    end
+    
+    def print_timeout_stream
+      timeout_output_stream.each do |output|
+        puts output.yellow
       end
     end
 
@@ -35,8 +35,9 @@ class Bunka
     def print_summary
       print "\n"
       print_timeout_stream
-      print_failed_stream
-      print_success_stream if verbose_success?
+      puts "\nErrors: ".red if @serverspecfile
+      print_failed_stream 
+      print_success_stream if verbose_success? 
 
       puts "\n---------------------------------------\n"
 
@@ -44,6 +45,7 @@ class Bunka
       puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
       puts "#{'Failed'.red}: #{failed_output_stream.count}"
       puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
+      puts "\n"
     end
   end
 end
