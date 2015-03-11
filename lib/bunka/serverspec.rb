@@ -3,7 +3,8 @@ require 'rspec/core/rake_task'
 require 'rake'
 require 'bunka/rake_spec'
 require 'bunka/spec_helper'
-require 'serverspec'
+require 'pry'
+require 'serverspecprinter'
 
 class Bunka
 	class << self
@@ -11,16 +12,23 @@ class Bunka
 		def serverspecsetup
 			hosts = File.readlines(ENV['HOME']+'/servers/sandboxservers').each {|l| l.chomp!}
   		#hosts.each do |host|
-    	#	short_name = host.split('.')[0]
+    	#	short_name = host.split('.')[0]		
 
-    	RSpec::Core::RakeTask.new(:spec) do |t|
-      t.pattern = ENV['HOME']+'/.serverspecfile.rb'
-			end
+
 			
 			hosts.each do |host|
+					
+    		RSpec::Core::RakeTask.new('spec:'+host) do |t|
+      		t.pattern = ENV['HOME']+ @serverspecfile
+					t.fail_on_error = false
+				end
 					puts "Run serverspec to #{host}"
 					ENV['TARGET_HOST'] = host
-  				Rake::Task['spec'].invoke
+					begin
+  					Rake::Task['spec:'+ host].execute
+						rescue RuntimeError
+  						puts 'this is failed'
+					end
 			end
 		end
 	end
