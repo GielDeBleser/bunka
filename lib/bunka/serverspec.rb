@@ -1,12 +1,13 @@
 require 'rspec/core/rake_task'
 require 'rake'
-require 'bunka/serverspecprinter'
+#require 'bunka/serverspecprinter'
 require 'rspec'
 
 class Bunka
 	class << self
 
 		def serverspecsetup
+						
 			hosts = File.readlines(ENV['HOME']+'/servers/sandboxservers').each {|l| l.chomp!}
   		#hosts.each do |host|
     	#	short_name = host.split('.')[0]		
