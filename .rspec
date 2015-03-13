@@ -1,3 +1,2 @@
 --color
---require customformat.rb
---format CustomFormatter
+--format progress
