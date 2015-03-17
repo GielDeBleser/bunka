@@ -9,13 +9,19 @@ class Bunka
 	class << self
 
 		def serverspecsetup
+			if File.exist?(ENV['HOME']+'/servers/sandboxservers')
 			@hosts = File.readlines(ENV['HOME']+'/servers/sandboxservers').each {|l| l.chomp!}
-  		#hosts.each do |host|
+			else
+			puts 'Serverfile not found'
+			exit
+			end
+  		@errors = []
+			#hosts.each do |host|
     	#	short_name = host.split('.')[0]		
 
-
-			hosts.each do |host|
-      	config = RSpec.configuration
+				@hosts.each do |host|
+				
+				config = RSpec.configuration
 
 				formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
 
@@ -38,25 +44,44 @@ class Bunka
 					ENV['TARGET_HOST'] = host
 					begin
   				#	Rake::Task['spec:'+ host].execute
-					RSpec::Core::Runner.run([ENV['HOME'] + @serverspecfile])
+					
+				RSpec::Core::Runner.run([ENV['HOME'] + @serverspecfile])
+					
 						rescue RuntimeError
   						puts 'Serverspec failed'
 					end
-				h = formatter.output_hash
+				@h = formatter.output_hash
 				
+				binding.pry
+				
+				@h[:examples].each do |x|
+				if x[:status] == "failed"
+				@errors << (host + ':  ' + x[:full_description].red)
+				end
+				end
 				puts "\n"		
 				
-				#binding.pry			
-			
-				if 	h[:examples][0][:status] == 'failed'
-					puts 'F'.red	
-				elsif	h[:examples][0][:status] == 'passed'
-					puts '.'.green	
-				else 	h[:examples][0][:status] == 'pending'
-					puts 'P'.yellow	
-				end				
+				#binding.pry
+							
+				@h[:examples].each do |x|
+				if 	x[:status] == 'failed'
+					print 'F'.red	
+				end
+				if	x[:status] == 'passed'
+					print '.'.green	
+				end
+				if 	x[:status] == 'pending'
+					print 'P'.yellow	
+					end	
+				end			
 			end
-			print_results(h)
+			puts "\n"
+			puts "\n"+'Tests:'.green + @h[:summary][:example_count].to_s
+			puts 'Failed:'.red + @h[:summary][:failure_count].to_s
+			puts 'Pending:'.yellow + @h[:summary][:pending_count].to_s
+			puts "\n"+'Errors:'.red
+			puts @errors 
+			puts "\n"+'Duration:' + @h[:summary][:duration].to_s
 		end
 	end
 end
