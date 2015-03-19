@@ -15,9 +15,12 @@ class Bunka
 					puts 'Serverfile not found'
 					exit
 				end
-				RSpec.configure { |c| c.output_stream = nil }		
-				@hosts.each do |host|
-					ENV['TARGET_HOST'] = host
+				RSpec.configure do |c| 
+					c.output_stream = nil 
+				end		
+
+				@hosts.each do |hostx|
+					ENV['TARGET_HOST'] = hostx
 					binding.pry
 					config = RSpec.configuration
 					formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
@@ -37,18 +40,20 @@ class Bunka
 
 					begin
 						RSpec::Core::Runner.run([ENV['HOME'] + @serverspecfile])	
+
 					rescue RuntimeError
   					puts 'Serverspec failed'
 					end
 			
 
 					@h = formatter.output_hash
-					RSpec.clear_examples		
+					RSpec.clear_examples	
 					@h[:examples].each do |x|
 						if x[:status] == 'failed'
-							@errors << (host + ':  ' + x[:full_description].red)
+							@errors << (hostx + ':  ' + x[:full_description].red)
 						end
 					end
+					binding.pry
 					print_symbol_results
 
 			end
