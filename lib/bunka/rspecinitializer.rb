@@ -1,4 +1,5 @@
 require 'pry'
+require 'bunka/helpers'
 
 class Bunka
 	class << self
@@ -18,10 +19,11 @@ class Bunka
 				RSpec.configure do |c| 
 					c.output_stream = nil 
 				end		
-
-				@hosts.each do |hostx|
+        
+        threads = 10
+        @hosts.each_slice(threads).to_a.each do |h|
+				Parallel.map(h, in_processes: threads) do |hostx|
 					ENV['TARGET_HOST'] = hostx
-					binding.pry
 					config = RSpec.configuration
 					formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
 				
@@ -37,7 +39,6 @@ class Bunka
 					reporter.register_listener(formatter, *notifications)
     		
 
-
 					begin
 						RSpec::Core::Runner.run([ENV['HOME'] + @serverspecfile])	
 
@@ -50,13 +51,16 @@ class Bunka
 					RSpec.clear_examples	
 					@h[:examples].each do |x|
 						if x[:status] == 'failed'
+              failed x[:full_description]
 							@errors << (hostx + ':  ' + x[:full_description].red)
+            else
+              succeeded x[:full_description]
 						end
 					end
-					binding.pry
-					print_symbol_results
+					#print_symbol_results
 
 			end
+end
 		end
 	end
 end

@@ -10,7 +10,7 @@ class Bunka
 
 		def serverspecsetup
 			initializerspec	
-			print_number_results
+			#print_number_results
 		end
 	end
 end
