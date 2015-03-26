@@ -35,7 +35,6 @@ class Bunka
           end
           @hash = formatter.output_hash
           RSpec.clear_examples
-          binding.pry
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
                failed hostx +':   '+x[:full_description]
