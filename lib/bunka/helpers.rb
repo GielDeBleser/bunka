@@ -1,10 +1,8 @@
 require 'bunka/printers'
-require 'pry'
-require 'process_shared'
 
 class Bunka
   class << self
-    
+
     def failed(reason)
       failed_output_stream.push reason
       print_fail
@@ -25,8 +23,8 @@ class Bunka
     end
 
     def failed_output_stream
-      @failed_output_stream ||= ProcessShared::SharedArray.new
-   end
+      @failed_output_stream ||= Array.new
+    end
 
     def success_output_stream
       @success_output_stream ||= Array.new
