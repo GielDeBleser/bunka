@@ -12,7 +12,7 @@ class Bunka
         puts 'Serverfile not found'
         exit
       end
-
+      @pid = 0
       RSpec.configure do |c|
        c.output_stream = nil
       end
@@ -40,12 +40,14 @@ class Bunka
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
                failed x[:full_description]
+               puts @pid
             elsif x[:status] == 'passed'
               succeeded x[:full_description]
             else
               timed_out x[:full_description]
             end
           end
+        @pid = @pid+1
         end 
       end
     end

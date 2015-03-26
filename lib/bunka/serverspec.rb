@@ -1,8 +1,5 @@
 require 'rspec'
-require 'colorize'
-require 'pry'
 require 'bunka/helpers'
-require 'thread'
 
 class Bunka
   class << self
@@ -15,13 +12,11 @@ class Bunka
         puts 'Serverfile not found'
         exit
       end
-
       RSpec.configure do |c|
        c.output_stream = nil
       end
-        threads = @threads 
-       @hosts.each_slice(threads).to_a.each do |h|
-       Parallel.map(h, in_processes: threads) do |hostx|
+       threads = @threads 
+       Parallel.map(@hosts, in_threads: 1) do |hostx|
           ENV['TARGET_HOST'] = hostx
           config = RSpec.configuration
           formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
@@ -40,9 +35,10 @@ class Bunka
           end
           @hash = formatter.output_hash
           RSpec.clear_examples
+          binding.pry
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
-               failed x[:full_description]
+               failed hostx +':   '+x[:full_description]
             elsif x[:status] == 'passed'
               succeeded x[:full_description]
             else
@@ -53,5 +49,3 @@ class Bunka
       end
     end
   end
-end
-
