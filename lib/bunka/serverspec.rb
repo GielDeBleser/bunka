@@ -1,5 +1,7 @@
 require 'rspec'
 require 'bunka/helpers'
+require 'pry'
+require 'socket'
 
 class Bunka
   class << self
@@ -16,7 +18,8 @@ class Bunka
        c.output_stream = nil
       end
        threads = @threads 
-       Parallel.map(@hosts, in_threads: 1) do |hostx|
+       Parallel.map(@hosts, in_processes: threads) do |hostx|
+          RSpec::Core::Configuration#reset
           ENV['TARGET_HOST'] = hostx
           config = RSpec.configuration
           formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
@@ -35,15 +38,22 @@ class Bunka
           end
           @hash = formatter.output_hash
           RSpec.clear_examples
+
+          s = TCPSocket.open(hostname, port)
+
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
-               failed hostx +':   '+x[:full_description]
+              puts 'sending...'
+              s.send(+ ': ' + x[:full_description])
+              ng.pry
+             puts 'voorbij send'
             elsif x[:status] == 'passed'
               succeeded x[:full_description]
             else
               timed_out x[:full_description]
             end
           end
+         s.close               # Close the socket when done
         end 
       end
     end
