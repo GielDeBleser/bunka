@@ -5,6 +5,7 @@ require 'bunka/helpers'
 require 'bunka/printers'
 require 'bunka/ssh'
 require 'bunka/serverspec'
+require 'bunka/socket'
 require 'pry'
 
 class Bunka
@@ -34,7 +35,8 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file
-      
+    
+      create_socket 
       serverspecsetup
       print_summary
     end
