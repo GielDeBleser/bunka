@@ -8,8 +8,6 @@ class Bunka
       loop{
       Thread.start(server1.accept) do |client|
         @failedarray.push client.read
-        binding.pry
-        puts 'wrote failure to array'
         client.close
       end
       }
@@ -19,8 +17,6 @@ class Bunka
       loop{  
       Thread.start(server2.accept) do |client|
         @successarray.push client.read
-        binding.pry
-        puts 'wrote success to array'
         client.close
       end
       }

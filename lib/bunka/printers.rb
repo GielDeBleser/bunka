@@ -51,9 +51,9 @@ class Bunka
       print_success_stream if verbose_success? 
 
       puts "\n---------------------------------------\n"
-      
+       @success = @hosts.count - @failedarray.count
       if @serverspecfile
-      puts "#{'Success'.green}: " + @successarray.count.to_s
+      puts "#{'Success'.green}: " + @success.to_s
       else
       puts "#{'Success'.green}: #{success_output_stream.count}"
       end
@@ -64,8 +64,7 @@ class Bunka
        puts "#{'Failed'.red}: #{failed_output_stream.count}"
       end
       if @serverspecfile
-      puts "#{'Total'.blue}: " + (@failedarray.count + @successarray.count).to_s 
-      binding.pry
+      puts "#{'Total'.blue}: " + (@failedarray.count + @success).to_s 
       else
       puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
       end
