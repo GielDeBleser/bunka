@@ -35,10 +35,19 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file
-    
-      create_socket 
-      serverspecsetup
-      print_summary
+
+      @failedarray = Array.new
+      @successarray = Array.new
+      @timeoutarray = Array.new
+
+  thread_1 = Thread.new do
+    create_failed_socket 
+  end
+  thread_2 = Thread.new do
+    create_success_socket 
+  end
+  serverspecsetup
+  print_summary
     end
   end
 end

@@ -39,21 +39,25 @@ class Bunka
           @hash = formatter.output_hash
           RSpec.clear_examples
 
-          s = TCPSocket.open(hostname, port)
+          f = TCPSocket.open('localhost', 2000)
+          s = TCPSocket.open('localhost', 2001)
+          
 
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
-              puts 'sending...'
-              s.send(+ ': ' + x[:full_description])
-              ng.pry
-             puts 'voorbij send'
+              failedspec
+              f.write("\n"+hostx + ': ' + x[:full_description])
+
             elsif x[:status] == 'passed'
-              succeeded x[:full_description]
+              successspec
+              s.write("\n" + hostx + ': ' + x[:full_description])
             else
-              timed_out x[:full_description]
+              puts 'timeout'
             end
           end
-         s.close               # Close the socket when done
+         f.close 
+         s.close
+         
         end 
       end
     end

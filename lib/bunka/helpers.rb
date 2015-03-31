@@ -7,6 +7,14 @@ class Bunka
       failed_output_stream.push reason
       print_fail
     end
+    
+    def failedspec
+      print_fail
+    end
+    
+    def successspec
+      print_success
+    end
 
     def succeeded(reason)
       success_output_stream.push reason
