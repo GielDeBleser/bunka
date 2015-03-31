@@ -1,4 +1,5 @@
 require 'colorize'
+require 'pry'
 
 class Bunka
   class << self
@@ -32,19 +33,42 @@ class Bunka
       end
     end
 
+    def print_specfailed_stream
+      @failedarray.reject! { |c| c.empty? }
+      @successarray.reject! { |c| c.empty? }
+      @failedarray.each do |output|
+        puts output.red
+      end
+    end
+
+
     def print_summary
       print "\n"
       print_timeout_stream
       puts "\nErrors: ".red if @serverspecfile
+      print_specfailed_stream if @serverspecfile
       print_failed_stream 
       print_success_stream if verbose_success? 
 
       puts "\n---------------------------------------\n"
-
+      
+      if @serverspecfile
+      puts "#{'Success'.green}: " + @successarray.count.to_s
+      else
       puts "#{'Success'.green}: #{success_output_stream.count}"
+      end
       puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
-      puts "#{'Failed'.red}: #{failed_output_stream.count}"
+      if @serverspecfile
+       puts "#{'Failed: '.red}" + @failedarray.count.to_s
+      else 
+       puts "#{'Failed'.red}: #{failed_output_stream.count}"
+      end
+      if @serverspecfile
+      puts "#{'Total'.blue}: " + (@failedarray.count + @successarray.count).to_s 
+      binding.pry
+      else
       puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
+      end
       puts "\n"
     end
   end
