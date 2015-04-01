@@ -8,15 +8,7 @@ class Bunka
       print_fail
     end
     
-    def failedspec
-      print_fail
-    end
-    
-    def successspec
-      print_success
-    end
-
-    def succeeded(reason)
+   def succeeded(reason)
       success_output_stream.push reason
       print_success
     end
@@ -44,6 +36,18 @@ class Bunka
 
     def invert?
       @invert
+    end
+
+    def failedspec
+      print_fail
+    end
+    
+    def successspec
+      print_success
+    end
+    
+    def timeoutspec
+      print_timeout
     end
   end
 end
