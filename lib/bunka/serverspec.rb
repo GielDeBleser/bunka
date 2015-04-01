@@ -41,28 +41,26 @@ class Bunka
 
           f = TCPSocket.open('localhost', 2000)
           s = TCPSocket.open('localhost', 2001)
-          
+         @failstatus = false
+         @successstatus = false 
 
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
-              if !invert?
-                failedspec
-              else
-                successspec
-              end
-
+              @failstatus = true
               f.write("\n"+hostx + ': ' + x[:full_description])
-
             elsif x[:status] == 'passed'
-              if !invert?
-                successspec
-              else
-                failedspec
-              end
-              
               s.write("\n" + hostx + ': ' + x[:full_description])
             end
           end
+
+          if !invert? && @failstatus == true
+            failedspec
+          elsif invert? && @failstatus == false
+            failedspec
+          else
+            successspec
+          end
+
          f.close 
          s.close
          

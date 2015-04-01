@@ -46,6 +46,7 @@ class Bunka
       thread_2 = Thread.new do
         create_success_socket 
       end
+      sleep(2)
       serverspecsetup
       print_summary
     end
