@@ -33,28 +33,49 @@ class Bunka
       end
     end
 
-    def print_specfailed_stream
+    def print_spec_streams
       @failedarray.reject! { |c| c.empty? }
       @successarray.reject! { |c| c.empty? }
       specinvert
+
+      if verbose_success?
+        print_successspec_stream
+      else
+        print_failedspec_stream
+      end
+    end
+    
+    def print_failedspec_stream
       @failedarray.each do |output|
         puts output.red
+      end
+    end
+    
+    def print_successspec_stream
+      @successarray.each do |output|
+        puts output.green
       end
     end
 
     def specinvert
       if invert?
+      @dummy = @failedarray  
       @failedarray = @successarray
+      @successarray = @dummy
       end
     end
 
     def print_summary
       print "\n"
       print_timeout_stream
-      puts "\nErrors: ".red if @serverspecfile
-      print_specfailed_stream if @serverspecfile
+      if @serverspecfile && !verbose_success?
+        puts "\nErrors: ".red
+      else
+        puts "\nSuccesses: ".green
+      end      
+      print_spec_streams if @serverspecfile
       print_failed_stream 
-      print_success_stream if verbose_success? 
+      print_success_stream if verbose_success?
 
       puts "\n---------------------------------------\n"
       
