@@ -20,7 +20,7 @@ class Bunka
         puts output.red
       end
     end
-    
+
     def print_timeout_stream
       timeout_output_stream.each do |output|
         puts output.yellow
@@ -44,13 +44,13 @@ class Bunka
         print_failedspec_stream
       end
     end
-    
+
     def print_failedspec_stream
       @failedarray.each do |output|
         puts output.red
       end
     end
-    
+
     def print_successspec_stream
       @successarray.each do |output|
         puts output.green
@@ -59,9 +59,9 @@ class Bunka
 
     def specinvert
       if invert?
-      @dummy = @failedarray  
-      @failedarray = @successarray
-      @successarray = @dummy
+        @dummy = @failedarray
+        @failedarray = @successarray
+        @successarray = @dummy
       end
     end
 
@@ -71,41 +71,41 @@ class Bunka
       if @serverspecfile && !verbose_success?
         puts "\nErrors: ".red
       else
-        puts "\nSuccesses: ".green
-      end      
+        puts "\nSuccesses: ".green if @serverspecfile
+      end
       print_spec_streams if @serverspecfile
-      print_failed_stream 
+      print_failed_stream
       print_success_stream if verbose_success?
 
       puts "\n---------------------------------------\n"
-      
+
       if @serverspecfile
-      @failed = @failedarray.count 
-      @success = @hosts.count - @failed
-      @total = @failedarray.count + @success
-      @timedout = @total - @failed - @success
+        @failed = @failedarray.count
+        @success = @hosts.count - @failed
+        @total = @failedarray.count + @success
+        @timedout = @total - @failed - @success
       end
 
       if @serverspecfile
-      puts "#{'Success'.green}: " + @success.to_s
+        puts "#{'Success'.green}: " + @success.to_s
       else
-      puts "#{'Success'.green}: #{success_output_stream.count}"
+        puts "#{'Success'.green}: #{success_output_stream.count}"
       end
 
       if @serverspecfile
-      puts "#{'Timed out or does not resolve'.yellow}: " + @timedout.to_s
+        puts "#{'Timed out or does not resolve'.yellow}: " + @timedout.to_s
       else
-      puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
+        puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
       end
       if @serverspecfile
-       puts "#{'Failed: '.red}" + @failed.to_s
-      else 
-       puts "#{'Failed'.red}: #{failed_output_stream.count}"
+        puts "#{'Failed: '.red}" + @failed.to_s
+      else
+        puts "#{'Failed'.red}: #{failed_output_stream.count}"
       end
       if @serverspecfile
-      puts "#{'Total'.blue}: " + @total.to_s 
+        puts "#{'Total'.blue}: " + @total.to_s
       else
-      puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
+        puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
       end
       puts "\n"
     end
