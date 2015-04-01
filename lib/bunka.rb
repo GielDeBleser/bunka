@@ -40,14 +40,14 @@ class Bunka
       @successarray = Array.new
       @timeoutarray = Array.new
 
-  thread_1 = Thread.new do
-    create_failed_socket 
-  end
-  thread_2 = Thread.new do
-    create_success_socket 
-  end
-  serverspecsetup
-  print_summary
+      thread_1 = Thread.new do
+        create_failed_socket 
+      end
+      thread_2 = Thread.new do
+        create_success_socket 
+      end
+      serverspecsetup
+      print_summary
     end
   end
 end

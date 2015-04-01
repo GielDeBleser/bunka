@@ -45,14 +45,22 @@ class Bunka
 
           @hash[:examples].each do |x|
             if x[:status] == 'failed'
-              failedspec
+              if !invert?
+                failedspec
+              else
+                successspec
+              end
+
               f.write("\n"+hostx + ': ' + x[:full_description])
 
             elsif x[:status] == 'passed'
-              successspec
+              if !invert?
+                successspec
+              else
+                failedspec
+              end
+              
               s.write("\n" + hostx + ': ' + x[:full_description])
-            else
-              puts 'timeout'
             end
           end
          f.close 

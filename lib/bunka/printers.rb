@@ -36,11 +36,17 @@ class Bunka
     def print_specfailed_stream
       @failedarray.reject! { |c| c.empty? }
       @successarray.reject! { |c| c.empty? }
+      specinvert
       @failedarray.each do |output|
         puts output.red
       end
     end
 
+    def specinvert
+      if invert?
+      @failedarray = @successarray
+      end
+    end
 
     def print_summary
       print "\n"
@@ -51,20 +57,32 @@ class Bunka
       print_success_stream if verbose_success? 
 
       puts "\n---------------------------------------\n"
-       @success = @hosts.count - @failedarray.count
+      
+      if @serverspecfile
+      @failed = @failedarray.count 
+      @success = @hosts.count - @failed
+      @total = @failedarray.count + @success
+      @timedout = @total - @failed - @success
+      end
+
       if @serverspecfile
       puts "#{'Success'.green}: " + @success.to_s
       else
       puts "#{'Success'.green}: #{success_output_stream.count}"
       end
-      puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
+
       if @serverspecfile
-       puts "#{'Failed: '.red}" + @failedarray.count.to_s
+      puts "#{'Timed out or does not resolve'.yellow}: " + @timedout.to_s
+      else
+      puts "#{'Timed out or does not resolve'.yellow}: #{timeout_output_stream.count}"
+      end
+      if @serverspecfile
+       puts "#{'Failed: '.red}" + @failed.to_s
       else 
        puts "#{'Failed'.red}: #{failed_output_stream.count}"
       end
       if @serverspecfile
-      puts "#{'Total'.blue}: " + (@failedarray.count + @success).to_s 
+      puts "#{'Total'.blue}: " + @total.to_s 
       else
       puts "#{'Total'.blue}: #{success_output_stream.count + timeout_output_stream.count + failed_output_stream.count}"
       end
