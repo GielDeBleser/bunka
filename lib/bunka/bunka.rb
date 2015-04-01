@@ -10,7 +10,7 @@ class Bunka
       end
     end
 
-    def execute_query fqdn
+    def execute_query(fqdn)
       begin
         timeout @timeout_interval do
           Net::SSH.start(fqdn, 'root', paranoid: false, forward_agent: true) do |ssh|
@@ -25,7 +25,7 @@ class Bunka
       end
     end
 
-    def parse_output output, fqdn
+    def parse_output(output, fqdn)
       if output[2] == 0 && !invert?
         succeeded "#{fqdn}: #{output[0]}"
       elsif output[2] != 0 && invert?

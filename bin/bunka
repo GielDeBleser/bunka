@@ -25,7 +25,7 @@ class BunkaCommand < Thor
   option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
   option :'from-file', type: :string, desc: 'path to file with list of servers', default: '/.bunka/servers'
   def testserverspec(serverspecfile)
-    Bunka.testserverspec(serverspecfile, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file']) 
+    Bunka.testserverspec(serverspecfile, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
   end
 end
 

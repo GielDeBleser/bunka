@@ -10,7 +10,7 @@ require 'pry'
 
 class Bunka
   class << self
-    def test command, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil
+    def test(command, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
       @command = command
       @invert = invert
       @query = query
@@ -27,7 +27,7 @@ class Bunka
       print_summary
     end
 
-    def testserverspec serverspecfile, timeout_interval, verbose_success, invert, sequential, threads, file = '/.bunka/servers'
+    def testserverspec(serverspecfile, timeout_interval, verbose_success, invert, sequential, threads, file = '/.bunka/servers')
       @serverspecfile = serverspecfile
       @invert = invert
       @sequential = sequential
@@ -36,17 +36,17 @@ class Bunka
       @verbose_success = verbose_success
       @file = file
 
-      @failedarray = Array.new
-      @successarray = Array.new
-      @timeoutarray = Array.new
+      @failedarray = []
+      @successarray = []
+      @timeoutarray = []
 
-      thread_1 = Thread.new do
-        create_failed_socket 
+      Thread.new do
+        create_failed_socket
       end
-      thread_2 = Thread.new do
-        create_success_socket 
+      Thread.new do
+        create_success_socket
       end
-      sleep(2)
+      sleep(1)
       serverspecsetup
       print_summary
     end
