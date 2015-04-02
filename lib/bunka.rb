@@ -6,7 +6,6 @@ require 'bunka/printers'
 require 'bunka/ssh'
 require 'bunka/serverspec'
 require 'bunka/socket'
-require 'pry'
 
 class Bunka
   class << self
@@ -39,7 +38,8 @@ class Bunka
       @failedarray = []
       @successarray = []
       @timeoutarray = []
-
+      
+      start = Time.now
       Thread.new do
         create_failed_socket
       end
@@ -49,6 +49,8 @@ class Bunka
       sleep(1)
       serverspecsetup
       print_summary
+      finish = Time.now
+      puts finish - start
     end
   end
 end
