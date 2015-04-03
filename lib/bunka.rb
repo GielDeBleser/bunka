@@ -41,6 +41,10 @@ class Bunka
       @successarray = []
       @timeoutarray = []
       
+      if File.exist?('/tmp/sock')
+        File.delete('/tmp/sock')
+      end
+
       start = Time.now
       Thread.new do
         create_unix_socket
