@@ -12,8 +12,8 @@ class Bunka
         c.output_stream = nil
       end
 
-      @hosts.each_slice(@threads).to_a.each do |h|
-      Parallel.map(h, in_processes: @threads) do |hostx|
+      @hosts.each_slice(@processes).each do |h|
+      Parallel.map(h, in_processes: @processes) do |hostx|
         ENV['TARGET_HOST'] = hostx
         @hostx = hostx
         config = RSpec.configuration
@@ -57,19 +57,22 @@ class Bunka
     end  
 
     def parse_spec_output
-      f = TCPSocket.open('localhost', 2000)
-      s = TCPSocket.open('localhost', 2001)
+      c = UNIXSocket.open("/tmp/sock")
+      
       @failstatus = false
       @successstatus = false
 
       @hash[:examples].each do |x|
         if x[:status] == 'failed'
           @failstatus = true
-          f.write("\n" + @hostx + ': ' + x[:full_description])
+          c.write('failedtest' + "\n" +  @hostx + ': ' + x[:full_description])
+          puts @failedarray
         elsif x[:status] == 'passed'
-          s.write("\n" + @hostx + ': ' + x[:full_description])
+          c.write('successtest' + "\n" + @hostx + ': ' + x[:full_description])
         end
       end
+
+      c.close
 
       if !invert? && @failstatus == true
         failedspec
@@ -78,8 +81,6 @@ class Bunka
       else
         successspec
       end
-        f.close
-        s.close
     end
   end
 end

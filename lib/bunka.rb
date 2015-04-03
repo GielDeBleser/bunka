@@ -26,11 +26,11 @@ class Bunka
       print_summary
     end
 
-    def testserverspec(serverspecfile, timeout_interval, verbose_success, invert, sequential, threads, file = '/.bunka/servers')
+    def testserverspec(serverspecfile, timeout_interval, verbose_success, invert, sequential, processes, file = '/.bunka/servers')
       @serverspecfile = serverspecfile
       @invert = invert
       @sequential = sequential
-      @threads = sequential ? 1 : threads
+      @processes = sequential ? 1 : processes
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file
@@ -41,14 +41,12 @@ class Bunka
       
       start = Time.now
       Thread.new do
-        create_failed_socket
-      end
-      Thread.new do
-        create_success_socket
+        create_unix_socket
       end
       sleep(1)
       serverspecsetup
       print_summary
+     # @server4.close
       finish = Time.now
       puts finish - start
     end
