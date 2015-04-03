@@ -27,8 +27,9 @@ class Bunka
       print_summary
     end
 
-    def testserverspec(serverspecfile, timeout_interval, verbose_success, invert, sequential, processes, file = '/.bunka/servers')
+    def testserverspec(serverspecfile, query, timeout_interval, verbose_success, invert, sequential, processes, file)
       @serverspecfile = serverspecfile
+      @query = query
       @invert = invert
       @sequential = sequential
       @processes = sequential ? 1 : processes
