@@ -43,10 +43,17 @@ class Bunka
     end
 
     def file_control
-      if File.exist?(ENV['HOME'] + @file)
-        @hosts = File.readlines(ENV['HOME'] + @file).each { |l| l.chomp! }
+      if @file
+        if File.exist?(ENV['HOME'] + @file)
+          @hosts = File.readlines(ENV['HOME'] + @file).each { |l| l.chomp! }
+        else
+          puts 'Serverfile not found'
+          exit
+        end
+      elsif @query
+        @hosts = knife_search @query
       else
-        puts 'Serverfile not found'
+        puts 'Wrong querry'
         exit
       end
 
