@@ -6,6 +6,7 @@ require 'bunka/printers'
 require 'bunka/ssh'
 require 'bunka/serverspec'
 require 'bunka/socket'
+require 'pry'
 
 class Bunka
   class << self
@@ -46,7 +47,7 @@ class Bunka
       sleep(1)
       serverspecsetup
       print_summary
-     # @server4.close
+      File.delete('/tmp/sock')
       finish = Time.now
       puts finish - start
     end

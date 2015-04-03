@@ -31,8 +31,8 @@ class Bunka
       }
     end
       def create_unix_socket
-        server4 = UNIXServer.open('/tmp/sock')  # Socket to listen
-        loop{                   # Servers run forever
+        server4 = UNIXServer.new('/tmp/sock')  # Socket to listen
+        loop {                   # Servers run forever
           Thread.start(server4.accept) do |client|
           string = client.read
           if string.start_with?('failedtest')
