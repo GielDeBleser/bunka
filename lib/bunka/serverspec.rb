@@ -30,14 +30,21 @@ class Bunka
         )
         reporter.register_listener(formatter, *notifications)
         begin
+        timeout @timeout_interval do
+          Net::SSH.start(hostx, 'root', paranoid: false, forward_agent: true) 
+          end
           RSpec::Core::Runner.run([@serverspecfile])
+        rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH => e
+          timeoutspec 
+          @timedoutbool = true
+          fill_timeout_array
         rescue RuntimeError
           puts 'Serverspec failed'
         end
         @hash = formatter.output_hash
         RSpec.clear_examples
 
-        parse_spec_output
+        parse_spec_output unless @timedoutbool == true
         end
       end
     end
@@ -91,6 +98,11 @@ class Bunka
       else
         successspec
       end
+    end
+
+    def fill_timeout_array
+      c = UNIXSocket.open("/tmp/sock")
+      c.write('timeouttest' + ' - ' +  @hostx)
     end
   end
 end
