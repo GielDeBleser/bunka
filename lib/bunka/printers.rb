@@ -56,7 +56,7 @@ class Bunka
         puts output.green
       end
     end
-    
+
     def print_timeoutspec_stream
       @timeoutarray.each do |output|
         puts output.yellow
@@ -72,10 +72,13 @@ class Bunka
     end
 
     def print_summary
+      print_output
+      puts "\n---------------------------------------\n"
+      print_counts
+    end
+
+    def print_output
       print "\n"
-
-      puts @timeoutarray.inspect
-
       print_timeout_stream
       if @serverspecfile && !verbose_success?
         puts "\nErrors: ".red
@@ -84,27 +87,25 @@ class Bunka
       end
       print_spec_streams if @serverspecfile
       if @serverspecfile && @timeoutarray.count > 0
-        puts "\n" + 'Timed out or unresolved nodes: '.yellow
+        puts "\nTimed out or unresolved nodes: \n".yellow
         print_timeoutspec_stream
       end
       print_failed_stream
       print_success_stream if verbose_success?
+    end
 
-      puts "\n---------------------------------------\n"
-
+    def print_counts
       if @serverspecfile
         @failed = @failedarray.count
         @success = @successarray.count
         @timedout = @timeoutarray.count
         @total = @failed + @success + @timedout
       end
-
       if @serverspecfile
         puts "#{'Success'.green}: " + @success.to_s
       else
         puts "#{'Success'.green}: #{success_output_stream.count}"
       end
-
       if @serverspecfile
         puts "#{'Timed out or does not resolve'.yellow}: " + @timedout.to_s
       else

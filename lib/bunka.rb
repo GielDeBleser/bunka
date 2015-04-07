@@ -18,7 +18,7 @@ class Bunka
       @threads = sequential ? 1 : threads
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
-      @file = file
+      @file = File.expand_path(file)
 
       Parallel.map(nodes, in_threads: @threads) do |fqdn|
         execute_query fqdn
@@ -28,23 +28,19 @@ class Bunka
     end
 
     def testserverspec(serverspecfile, query, timeout_interval, verbose_success, invert, sequential, processes, file)
-      @serverspecfile = serverspecfile
+      @serverspecfile = File.expand_path(serverspecfile)
       @query = query
       @invert = invert
       @sequential = sequential
       @processes = sequential ? 1 : processes
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
-      @file = file
-
+      @file = File.expand_path(file)
       @failedarray = []
       @successarray = []
       @timeoutarray = []
       
-      if File.exist?('/tmp/sock')
-        File.delete('/tmp/sock')
-      end
-
+      socket_delete     
       start = Time.now
       Thread.new do
         create_unix_socket
@@ -52,9 +48,8 @@ class Bunka
       sleep(1)
       serverspecsetup
       print_summary
-      File.delete('/tmp/sock')
-      finish = Time.now
-      puts finish - start
+      socket_delete
+      puts Time.now - start
     end
   end
 end
