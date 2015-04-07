@@ -6,12 +6,12 @@ require 'socket'
 class Bunka
   class << self
     def serverspecsetup
+
       file_control
 
       RSpec.configure do |c|
         c.output_stream = nil
       end
-
       @hosts.each_slice(@processes).each do |h|
       Parallel.map(h, in_processes: @processes) do |hostx|
         ENV['TARGET_HOST'] = hostx
@@ -30,7 +30,7 @@ class Bunka
         )
         reporter.register_listener(formatter, *notifications)
         begin
-          RSpec::Core::Runner.run([ENV['HOME'] + @serverspecfile])
+          RSpec::Core::Runner.run([@serverspecfile])
         rescue RuntimeError
           puts 'Serverspec failed'
         end
@@ -43,9 +43,12 @@ class Bunka
     end
 
     def file_control
+      
+      @file = File.expand_path(@file)
+      @serverspecfile = File.expand_path(@serverspecfile)
       if @file
-        if File.exist?(ENV['HOME'] + @file)
-          @hosts = File.readlines(ENV['HOME'] + @file).each { |l| l.chomp! }
+        if File.exist?(@file)
+          @hosts = File.readlines(@file).each { |l| l.chomp! }
         else
           puts 'Serverfile not found'
           exit
@@ -57,7 +60,7 @@ class Bunka
         exit
       end
 
-      if File.exist?(ENV['HOME'] + @serverspecfile) == false
+      if File.exist?(@serverspecfile) == false
         puts 'Serverspecfile not found'
         exit
       end
