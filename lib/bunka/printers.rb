@@ -100,12 +100,12 @@ class Bunka
 
     def print_counts
       puts "#{'Success'.green}: #{success_output_stream.count}"
-      puts "#{'Timed out or does not resolve'.yellow}: +
-        #{timeout_output_stream.count}"
+      puts "#{'Timed out or does not resolve'.yellow}: " +
+        "#{timeout_output_stream.count}"
       puts "#{'Failed'.red}: #{failed_output_stream.count}"
       puts "#{'Total'.blue}: #{success_output_stream.count +
         timeout_output_stream.count +
-        failed_output_stream.count} + \n"
+        failed_output_stream.count}"
     end
 
     def print_spec_counts
