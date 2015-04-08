@@ -63,10 +63,10 @@ class Bunka
 
     def specinvert
       return unless invert?
-        @dummyarray, @failedarray, @successarray = @failedarray, @successarray, @dummyarray
-        @dummyint = @failed
-        @failed = @success
-        @success =  @dummyint
+      @dummyarray, @failedarray, @successarray = @failedarray, @successarray, @dummyarray
+      @dummyint = @failed
+      @failed = @success
+      @success =  @dummyint
     end
 
     def print_summary
@@ -90,8 +90,8 @@ class Bunka
       end
       print_spec_streams
       return unless  @timeoutarray.count > 0
-        puts "\nTimed out or unresolved nodes: \n".yellow
-        print_timeoutspec_stream
+      puts "\nTimed out or unresolved nodes: \n".yellow
+      print_timeoutspec_stream
     end
 
     def print_counts

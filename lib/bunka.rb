@@ -39,16 +39,7 @@ class Bunka
 
       socket_delete
       start = Time.now
-      Thread.new do
-        create_failed_unix_socket
-      end
-      Thread.new do
-        create_success_unix_socket
-      end
-      Thread.new do
-        create_timeout_unix_socket
-      end
-      sleep(2)
+      create_sockets
       serverspecsetup
       print_summary
       socket_delete

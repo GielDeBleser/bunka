@@ -40,5 +40,17 @@ class Bunka
       File.delete('/tmp/success_sock') if File.exist?('/tmp/success_sock')
       File.delete('/tmp/timeout_sock') if File.exist?('/tmp/timeout_sock')
     end
+
+    def create_sockets
+      Thread.new do
+        create_failed_unix_socket
+      end
+      Thread.new do
+        create_success_unix_socket
+      end
+      Thread.new do
+        create_timeout_unix_socket
+      end
+    end
   end
 end

@@ -5,7 +5,8 @@ require 'socket'
 class Bunka
   class << self
     def serverspecsetup
-      file_control
+      check_serverfile_existence
+      check_serverspecfile_existence
       @hosts.each_slice(@processes).each do |h|
         Parallel.map(h, in_processes: @processes) do |hostx|
           rspec_config
@@ -24,7 +25,7 @@ class Bunka
           run_tests
           @hash = formatter.output_hash
           RSpec.clear_examples
-          parse_spec_output_to_socket unless @timedoutbool == true
+          testresults_to_sockets unless @timedoutbool == true
         end
       end
     end
@@ -58,16 +59,14 @@ class Bunka
     end
 
     def run_tests
-      begin
-        timeout @timeout_interval do
-          Net::SSH.start(@hostx, 'root')
-        end
-        RSpec::Core::Runner.run([@serverspecfile])
-        rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH
-          timeout_to_socket
-        rescue RuntimeError
-          puts 'Serverspec failed'
+      timeout @timeout_interval do
+        Net::SSH.start(@hostx, 'root')
       end
+      RSpec::Core::Runner.run([@serverspecfile])
+      rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH
+        timeout_to_socket
+      rescue RuntimeError
+        puts 'Serverspec failed'
     end
 
     def timeout_to_socket
@@ -76,7 +75,7 @@ class Bunka
       fill_timeout_array
     end
 
-    def file_control
+    def check_serverfile_existence
       if @file
         if File.exist?(@file)
           @hosts = File.readlines(@file).each &:chomp!
@@ -90,28 +89,34 @@ class Bunka
         puts 'Wrong querry'
         exit
       end
-      if File.exist?(@serverspecfile) == false
-        puts 'Serverspecfile not found'
-        exit
-      end
     end
 
-    def parse_spec_output_to_socket
-      failed_sock = UNIXSocket.open('/tmp/failed_sock')
-      success_sock = UNIXSocket.open('/tmp/success_sock')
+    def check_serverspecfile_existence
+      return unless File.exist?(@serverspecfile) == false
+      puts 'Serverspecfile not found'
+      exit
+    end
+
+    def testresults_to_sockets
+      @failed_sock = UNIXSocket.open('/tmp/failed_sock')
+      @success_sock = UNIXSocket.open('/tmp/success_sock')
       @failstatus = false
       @successstatus = false
+      loop_testresults_in_sockets
+      @failed_sock.close
+      @success_sock.close
+      check_invert
+    end
+
+    def loop_testresults_in_sockets
       hash[:examples].each do |x|
         if x[:status] == 'failed'
           @failstatus = true
-          failed_sock.write("\n" + @hostx + ': ' + x[:full_description])
+          @failed_sock.write("\n" + @hostx + ': ' + x[:full_description])
         elsif x[:status] == 'passed'
-          success_sock.write("\n" + @hostx + ': ' + x[:full_description])
+          @success_sock.write("\n" + @hostx + ': ' + x[:full_description])
         end
       end
-      failed_sock.close
-      success_sock.close
-      check_invert
     end
 
     def check_invert

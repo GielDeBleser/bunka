@@ -8,19 +8,19 @@ class Bunka
       exit_code = nil
 
       ssh.open_channel do |channel|
-        channel.exec(command) do |ch, success|
+        channel.exec(command) do |_ch, success|
           unless success
             abort "FAILED: couldn't execute command (ssh.channel.exec)"
           end
-          channel.on_data do |ch, data|
+          channel.on_data do |_ch, data|
             stdout_data += data
           end
 
-          channel.on_extended_data do |ch, type, data|
+          channel.on_extended_data do |_ch, _type, data|
             stderr_data += data
           end
 
-          channel.on_request('exit-status') do |ch, data|
+          channel.on_request('exit-status') do |_ch, data|
             exit_code = data.read_long
           end
         end

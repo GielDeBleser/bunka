@@ -11,18 +11,16 @@ class Bunka
     end
 
     def execute_query(fqdn)
-      begin
-        timeout @timeout_interval do
-          Net::SSH.start(fqdn, 'root', paranoid: false, forward_agent: true) do |ssh|
-            output = ssh_exec!(ssh, @command)
-            parse_output output, fqdn
-          end
+      timeout @timeout_interval do
+        Net::SSH.start(fqdn, 'root', paranoid: false, forward_agent: true) do |ssh|
+          output = ssh_exec!(ssh, @command)
+          parse_output output, fqdn
         end
-      rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH => e
-        timed_out "#{fqdn}: #{e.message}"
-      rescue Exception => e
-        timed_out "#{fqdn}: #{e.inspect}"
       end
+    rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH => e
+      timed_out "#{fqdn}: #{e.message}"
+    rescue Exception => e
+      timed_out "#{fqdn}: #{e.inspect}"
     end
 
     def parse_output(output, fqdn)

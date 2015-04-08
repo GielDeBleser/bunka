@@ -2,7 +2,7 @@ require 'chef/knife'
 
 class Bunka
   class << self
-    def knife_search query
+    def knife_search(query)
       # Monkey patch Chef::Knife::UI to hide stdout
       Chef::Knife::UI.class_eval do
         def stdout
