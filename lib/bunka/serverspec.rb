@@ -73,7 +73,7 @@ class Bunka
     def timeout_to_socket
       timeoutspec
       @timedoutbool = true
-      #fill_timeout_array
+      fill_timeout_array
     end
 
     def file_control
@@ -125,8 +125,8 @@ class Bunka
     end
 
     def fill_timeout_array
-      c = UNIXSocket.open('/tmp/sock')
-      c.write('timeouttest' + ' - ' +  @hostx)
+      timeout_socket = UNIXSocket.open('/tmp/timeout_sock')
+      timeout_socket.write(' - ' +  @hostx)
     end
 
     def rspec_config
