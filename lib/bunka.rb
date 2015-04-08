@@ -15,7 +15,7 @@ class Bunka
       @threads = sequential ? 1 : threads
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
-      @file ? File.expand_path(file) : nil
+      @file = file ? File.expand_path(file) : nil
 
       Parallel.map(nodes, in_threads: @threads) do |fqdn|
         execute_query fqdn
@@ -32,12 +32,12 @@ class Bunka
       @processes = sequential ? 1 : processes
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
-      @file ? File.expand_path(file) : nil
+      @file = file ? File.expand_path(file) : nil
       @failedarray = []
       @successarray = []
       @timeoutarray = []
-      
-      socket_delete     
+
+      socket_delete
       start = Time.now
       Thread.new do
         create_failed_unix_socket

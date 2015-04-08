@@ -33,14 +33,14 @@ class Bunka
     end
 
     def print_spec_streams
-      @failedarray.reject! {|c| c.empty?}
-      @successarray.reject! {|c| c.empty?}
+      @failedarray.reject! &:empty?
+      @successarray.reject! &:empty?
       @failed = @failedarray.count
-      @success = @successarray.count - @failed
+      @success = @successarray.count - @failedarray.count
       @timedout = @timeoutarray.count
       @total = @failed + @success + @timedout
       specinvert
-      verbose_success?  ? print_successspec_stream : print_failedspec_stream
+      verbose_success? ? print_successspec_stream : print_failedspec_stream
     end
 
     def print_failedspec_stream
@@ -62,14 +62,11 @@ class Bunka
     end
 
     def specinvert
-      if invert?
-        @dummyarray = @failedarray
-        @failedarray = @successarray
-        @successarray = @dummyarray
+      return unless invert?
+        @dummyarray, @failedarray, @successarray = @failedarray, @successarray, @dummyarray
         @dummyint = @failed
         @failed = @success
-        @success = @dummyint
-      end
+        @success =  @dummyint
     end
 
     def print_summary
@@ -92,27 +89,26 @@ class Bunka
         puts "\n\nSuccesses: ".green
       end
       print_spec_streams
-      if @timeoutarray.count > 0
+      return unless  @timeoutarray.count > 0
         puts "\nTimed out or unresolved nodes: \n".yellow
         print_timeoutspec_stream
-      end
     end
 
     def print_counts
-      puts "#{'Success'.green}: #{success_output_stream.count}"
-      puts "#{'Timed out or does not resolve'.yellow}: " +
+      puts "#{'Success:'.green} #{success_output_stream.count}"
+      puts "#{'Timed out or does not resolve:'.yellow} " \
         "#{timeout_output_stream.count}"
-      puts "#{'Failed'.red}: #{failed_output_stream.count}"
-      puts "#{'Total'.blue}: #{success_output_stream.count +
-        timeout_output_stream.count +
-        failed_output_stream.count}"
+      puts "#{'Failed:'.red} #{failed_output_stream.count}"
+      puts "#{'Total:'.blue} #{success_output_stream.count \
+        timeout_output_stream.count \
+          failed_output_stream.count}"
     end
 
     def print_spec_counts
-      puts "#{'Success'.green}: " + @success.to_s
-      puts "#{'Timed out or does not resolve'.yellow}: " + @timedout.to_s
-      puts "#{'Failed: '.red}" + @failed.to_s
-      puts "#{'Total'.blue}: " + @total.to_s + "\n"
+      puts "#{'Success:'.green} " + @success.to_s
+      puts "#{'Timed out or does not resolve:'.yellow} " + @timedout.to_s
+      puts "#{'Failed:'.red} " + @failed.to_s
+      puts "#{'Total:'.blue} " + @total.to_s + "\n"
     end
   end
 end

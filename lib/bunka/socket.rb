@@ -12,7 +12,7 @@ class Bunka
         end
       end
     end
-    
+
     def create_success_unix_socket
       success_server = UNIXServer.new('/tmp/success_sock')  # Socket to listen
       loop do
@@ -23,7 +23,7 @@ class Bunka
         end
       end
     end
-    
+
     def create_timeout_unix_socket
       timeout_server = UNIXServer.new('/tmp/timeout_sock')  # Socket to listen
       loop do

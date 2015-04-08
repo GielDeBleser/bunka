@@ -79,7 +79,7 @@ class Bunka
     def file_control
       if @file
         if File.exist?(@file)
-          @hosts = File.readlines(@file).each { |l| l.chomp! }
+          @hosts = File.readlines(@file).each &:chomp!
         else
           puts 'Serverfile not found'
           exit
@@ -104,9 +104,9 @@ class Bunka
       hash[:examples].each do |x|
         if x[:status] == 'failed'
           @failstatus = true
-          failed_sock.write("\n" + @hostx +': ' + x[:full_description])
+          failed_sock.write("\n" + @hostx + ': ' + x[:full_description])
         elsif x[:status] == 'passed'
-          success_sock.write("\n" + @hostx +': ' + x[:full_description])
+          success_sock.write("\n" + @hostx + ': ' + x[:full_description])
         end
       end
       failed_sock.close
