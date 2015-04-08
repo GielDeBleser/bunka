@@ -12,7 +12,7 @@ class Bunka
         end
       end
     end
-    
+
     def create_success_unix_socket
       success_server = UNIXServer.new('/tmp/success_sock')  # Socket to listen
       loop do
@@ -23,7 +23,7 @@ class Bunka
         end
       end
     end
-    
+
     def create_timeout_unix_socket
       timeout_server = UNIXServer.new('/tmp/timeout_sock')  # Socket to listen
       loop do
@@ -39,6 +39,18 @@ class Bunka
       File.delete('/tmp/failed_sock') if File.exist?('/tmp/failed_sock')
       File.delete('/tmp/success_sock') if File.exist?('/tmp/success_sock')
       File.delete('/tmp/timeout_sock') if File.exist?('/tmp/timeout_sock')
+    end
+
+    def create_sockets
+      Thread.new do
+        create_failed_unix_socket
+      end
+      Thread.new do
+        create_success_unix_socket
+      end
+      Thread.new do
+        create_timeout_unix_socket
+      end
     end
   end
 end
