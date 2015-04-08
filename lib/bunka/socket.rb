@@ -1,30 +1,47 @@
 require 'socket'
-require 'pry'
 
 class Bunka
   class << self
-    def create_unix_socket
-      server4 = UNIXServer.new('/tmp/sock')  # Socket to listen
-      loop do                 # Servers run forever
-        Thread.start(server4.accept) do |client|
-          string = client.read
-          if string.start_with?('failedtest')
-            string.gsub!('failedtest', '')
-            @failedarray.push string
-          elsif string.start_with?('successtest')
-            string.gsub!('successtest', '')
-            @successarray.push string
-          else
-            string.gsub!('timeouttest', '')
-            @timeoutarray.push string
-          end
+    def create_failed_unix_socket
+      failed_server = UNIXServer.new('/tmp/failed_sock')  # Socket to listen
+      loop do
+        Thread.start(failed_server.accept) do |client|
+          testresult = client.read
+          @failedarray.push testresult
+          client.close
+        end
+      end
+    end
+    
+    def create_success_unix_socket
+      success_server = UNIXServer.new('/tmp/success_sock')  # Socket to listen
+      loop do
+        Thread.start(success_server.accept) do |client|
+          testresult = client.read
+          @successarray.push testresult
           client.close
         end
       end
     end
 
     def socket_delete
-      File.delete('/tmp/sock') if File.exist?('/tmp/sock')
+      File.delete('/tmp/failed_sock') if File.exist?('/tmp/failed_sock')
+      File.delete('/tmp/success_sock') if File.exist?('/tmp/success_sock')
+    end
+
+    def fill_failedarray
+      @testresult.gsub!('failedtest', '')
+      @failedarray.push @testresult
+    end
+
+    def fill_successarray
+      @testresult.gsub!('successtest', '')
+      @successarray.push @testresult
+    end
+
+    def fill_timeoutarray
+      @testresult.gsub!('timeouttest', '')
+      @timeoutarray.push @testresult
     end
   end
 end
