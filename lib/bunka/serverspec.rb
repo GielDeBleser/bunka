@@ -1,6 +1,5 @@
 require 'rspec'
 require 'bunka/helpers'
-require 'pry'
 require 'socket'
 
 class Bunka
@@ -24,6 +23,7 @@ class Bunka
           reporter.register_listener(formatter, *notifications)
           run_tests
           @hash = formatter.output_hash
+          RSpec.clear_examples
           parse_spec_output_to_socket unless @timedoutbool == true
         end
       end
@@ -38,7 +38,8 @@ class Bunka
     end
 
     def formatter
-      @formatter ||= RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
+      @formatter ||=
+        RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
     end
 
     def reporter
@@ -59,16 +60,20 @@ class Bunka
     def run_tests
       begin
         timeout @timeout_interval do
-          Net::SSH.start(@hostx, 'root', paranoid: false, forward_agent: true)
+          Net::SSH.start(@hostx, 'root')
         end
         RSpec::Core::Runner.run([@serverspecfile])
         rescue TimeoutError, Errno::ETIMEDOUT, SocketError, Errno::EHOSTUNREACH
-          timeoutspec
-          @timedoutbool = true
-          fill_timeout_array
+          timeout_to_socket
         rescue RuntimeError
           puts 'Serverspec failed'
-        end
+      end
+    end
+
+    def timeout_to_socket
+      timeoutspec
+      @timedoutbool = true
+      #fill_timeout_array
     end
 
     def file_control
@@ -92,17 +97,20 @@ class Bunka
     end
 
     def parse_spec_output_to_socket
-      c = UNIXSocket.open('/tmp/sock')
+      failed_sock = UNIXSocket.open('/tmp/failed_sock')
+      success_sock = UNIXSocket.open('/tmp/success_sock')
       @failstatus = false
       @successstatus = false
       hash[:examples].each do |x|
         if x[:status] == 'failed'
           @failstatus = true
-          c.write('failedtest' + "\n" +  @hostx + ': ' + x[:full_description])
+          failed_sock.write("\n" + @hostx +': ' + x[:full_description])
         elsif x[:status] == 'passed'
-          c.write('successtest' + "\n" + @hostx + ': ' + x[:full_description])
+          success_sock.write("\n" + @hostx +': ' + x[:full_description])
         end
       end
+      failed_sock.close
+      success_sock.close
       check_invert
     end
 

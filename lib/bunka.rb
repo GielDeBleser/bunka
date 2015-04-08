@@ -1,12 +1,9 @@
 require 'parallel'
 require 'bunka/bunka'
 require 'bunka/chef'
-require 'bunka/helpers'
-require 'bunka/printers'
 require 'bunka/ssh'
 require 'bunka/serverspec'
 require 'bunka/socket'
-require 'pry'
 
 class Bunka
   class << self
@@ -43,7 +40,10 @@ class Bunka
       socket_delete     
       start = Time.now
       Thread.new do
-        create_unix_socket
+        create_failed_unix_socket
+      end
+      Thread.new do
+        create_success_unix_socket
       end
       sleep(1)
       serverspecsetup
