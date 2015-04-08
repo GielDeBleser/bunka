@@ -45,7 +45,10 @@ class Bunka
       Thread.new do
         create_success_unix_socket
       end
-      sleep(1)
+      Thread.new do
+        create_timeout_unix_socket
+      end
+      sleep(2)
       serverspecsetup
       print_summary
       socket_delete
