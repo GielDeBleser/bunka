@@ -130,5 +130,22 @@ class Bunka
 
       print_summary
     end
+
+    def service(name, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+      @command = "service #{name} status"
+      @invert = invert
+      @query = query
+      @sequential = sequential
+      @threads = sequential ? 1 : threads
+      @timeout_interval = timeout_interval
+      @verbose_success = verbose_success
+      @file = file ? File.expand_path(file) : nil
+
+      Parallel.map(nodes, in_threads: @threads) do |fqdn|
+        execute_query fqdn
+      end
+
+      print_summary
+    end
   end
 end

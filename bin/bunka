@@ -85,6 +85,18 @@ class BunkaCommand < Thor
   def port(port, query = 'name:*')
     Bunka.port(port, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
   end
+
+  map '-s' => :service
+  desc 'service NAME [QUERY]', 'Test if specific service is running on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
+  option :invert, type: :boolean, desc: 'invert matched results', default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
+  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  def service(name, query = 'name:*')
+    Bunka.service(name, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+  end
 end
 
 BunkaCommand.start
