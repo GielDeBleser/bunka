@@ -28,7 +28,7 @@ class BunkaCommand < Thor
   end
 
   map '-f' => :file
-  desc 'file PATH [QUERY]', 'Test existence of a file on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
+  desc 'file PATH [QUERY]', 'Test existence of a file or directory on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
   option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
   option :invert, type: :boolean, desc: 'invert matched results', default: false
   option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
