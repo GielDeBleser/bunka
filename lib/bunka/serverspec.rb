@@ -67,6 +67,7 @@ class Bunka
         timeout_to_socket
       rescue RuntimeError
         puts 'Serverspec failed'
+        exit
     end
 
     def timeout_to_socket

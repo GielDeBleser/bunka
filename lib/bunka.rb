@@ -46,7 +46,7 @@ class Bunka
       puts Time.now - start
     end
 
-    def testfile(path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def findfile(path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
       @command = "find . -name '#{path}' | egrep '.*'"
       @invert = invert
       @query = query
@@ -99,6 +99,23 @@ class Bunka
 
     def chmod(permissions, path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
       @command = "chmod #{permissions} #{path}"
+      @invert = invert
+      @query = query
+      @sequential = sequential
+      @threads = sequential ? 1 : threads
+      @timeout_interval = timeout_interval
+      @verbose_success = verbose_success
+      @file = file ? File.expand_path(file) : nil
+
+      Parallel.map(nodes, in_threads: @threads) do |fqdn|
+        execute_query fqdn
+      end
+
+      print_summary
+    end
+
+    def port(port, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+      @command = "netstat -anp |grep ':#{port}'"
       @invert = invert
       @query = query
       @sequential = sequential
