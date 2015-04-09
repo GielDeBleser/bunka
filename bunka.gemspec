@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.description = 'A gem to perform command over parallel ssh connections on multiple chef serverspec. Output is rspec-like.'
   spec.authors = ['Steven De Coeyer', 'Jeroen Jacobs']
   spec.email = 'tech@openminds.be'
-  spec.files = `git ls-files`.split($\)
+  spec.files = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
   spec.homepage = 'https://github.com/openminds/bunka'
   spec.license = 'MIT'
 
