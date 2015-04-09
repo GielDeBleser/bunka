@@ -15,18 +15,21 @@ class Bunka
     end
 
     def print_failed_stream
+      puts "\nFailures: \n".red
       failed_output_stream.each do |output|
         puts output.red
       end
     end
 
     def print_timeout_stream
+      puts "\nTimed out or unresolved nodes: \n".yellow
       timeout_output_stream.each do |output|
         puts output.yellow
       end
     end
 
     def print_success_stream
+      puts "\nSuccesses: \n".green
       success_output_stream.each do |output|
         puts output.green
       end
@@ -99,8 +102,8 @@ class Bunka
       puts "#{'Timed out or does not resolve:'.yellow} " \
         "#{timeout_output_stream.count}"
       puts "#{'Failed:'.red} #{failed_output_stream.count}"
-      puts "#{'Total:'.blue} #{success_output_stream.count \
-        timeout_output_stream.count \
+      puts "#{'Total:'.blue} #{success_output_stream.count +
+        timeout_output_stream.count +
           failed_output_stream.count}"
     end
 
