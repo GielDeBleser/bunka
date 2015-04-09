@@ -44,9 +44,14 @@ class Bunka
       puts Time.now - start
     end
 
+<<<<<<< HEAD
     def findfile(path, query, timeout_interval, verbose_success,
                  invert, sequential, threads, file = nil)
       @command = "test -f '#{path}'"
+=======
+    def testfile(path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+      @command = "find . -name '#{path}' | egrep '.*'"
+>>>>>>> 9edb5a7... File methode finished
       @invert = invert
       @query = query
       @sequential = sequential
@@ -54,6 +59,7 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
+<<<<<<< HEAD
       parallel_exec
     end
 
@@ -107,6 +113,14 @@ class Bunka
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
       parallel_exec
+=======
+
+      Parallel.map(nodes, in_threads: @threads) do |fqdn|
+        execute_query fqdn
+      end
+
+      print_summary
+>>>>>>> 9edb5a7... File methode finished
     end
   end
 end
