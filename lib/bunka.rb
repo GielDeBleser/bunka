@@ -96,7 +96,7 @@ class Bunka
 
       print_summary
     end
-    
+
     def chmod(permissions, path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
       @command = "chmod #{permissions} #{path}"
       @invert = invert
