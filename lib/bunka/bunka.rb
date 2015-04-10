@@ -3,10 +3,12 @@ require 'net/ssh'
 class Bunka
   class << self
     def parallel_exec
+      start = Time.now
       Parallel.map(nodes, in_threads: @threads) do |fqdn|
         execute_query fqdn
       end
       print_summary
+      puts Time.now - start
     end
 
     def nodes
