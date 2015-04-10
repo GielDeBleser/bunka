@@ -2,6 +2,13 @@ require 'net/ssh'
 
 class Bunka
   class << self
+    def parallel_exec
+      Parallel.map(nodes, in_threads: @threads) do |fqdn|
+        execute_query fqdn
+      end
+      print_summary
+    end
+
     def nodes
       if @file
         File.readlines(@file).collect(&:strip)

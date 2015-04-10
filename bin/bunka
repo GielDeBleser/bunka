@@ -4,98 +4,137 @@ require 'thor'
 
 class BunkaCommand < Thor
   map '-t' => :test
-  desc 'test COMMAND [QUERY]', 'Execute command on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  desc 'test COMMAND [QUERY]', 'Execute command on nodes, scoped on the given' \
+    'query if query is given. Query syntax should be the same as' \
+      '`knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def test(command, query = 'name:*')
-    Bunka.test(command, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+    Bunka.test(command, query, options[:timeout], options[:'print-success'],
+               options[:invert], options[:sequential], options[:threads],
+               options[:'from-file'])
   end
 
   map '-s' => :serverspec
-  desc 'serverspec SERVERSPECFILE [QUERY]', 'Test nodes with serverspec, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :processes, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers'
+  desc 'serverspec SERVERSPECFILE [QUERY]', 'Test nodes with serverspec,' \
+    'scoped on the given query if query is given. Query syntax' \
+      'should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :processes, type: :numeric, desc: 'number of processes',
+                     default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def serverspec(serverspecfile, query = 'name:*')
-    Bunka.testserverspec(serverspecfile, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:processes], options[:'from-file'])
+    Bunka.testserverspec(serverspecfile, query, options[:timeout],
+                         options[:'print-success'], options[:invert],
+                         options[:sequential], options[:processes],
+                         options[:'from-file'])
   end
 
   map '-f' => :file
-  desc 'file PATH [QUERY]', 'Test existence of a file or directory on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  desc 'file PATH [QUERY]', 'Test existence of a file or directory' \
+    'on nodes, scoped on the given query if query is given.' \
+      ' Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def file(path, query = 'name:*')
-    Bunka.findfile(path, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
-  end
-
-  map '-r' => :remove
-  desc 'remove PATH [QUERY]', 'Remove a file or directory on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
-  def remove(path, query = 'name:*')
-    Bunka.removefile(path, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+    Bunka.findfile(path, query, options[:timeout], options[:'print-success'],
+                   options[:invert], options[:sequential], options[:threads],
+                   options[:'from-file'])
   end
 
   map '-md5' => :md5sum
-  desc 'md5sum PATH MD5SUM [QUERY]', 'Compare a MD5sum with a MD5sum of a file on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  desc 'md5sum PATH MD5SUM [QUERY]', 'Compare a MD5sum with a' \
+    'MD5sum of a file on nodes, scoped on the given query if query' \
+      'is given. Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def md5sum(path, checksum, query = 'name:*')
-    Bunka.md5sum(path, checksum, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
-  end
-
-  desc 'chmod PERMISSIONS PATH [QUERY]', 'Change the permissions of a file or folder on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
-  def chmod(permissions, path, query = 'name:*')
-    Bunka.chmod(permissions, path, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+    Bunka.md5sum(path, checksum, query, options[:timeout],
+                 options[:'print-success'], options[:invert],
+                 options[:sequential], options[:threads],
+                 options[:'from-file'])
   end
 
   map '-p' => :port
-  desc 'port PORTNUMBER [QUERY]', 'Test if specific port is listening on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  desc 'port PORTNUMBER [QUERY]', 'Test if specific port is listening' \
+    'on nodes, scoped on the given query if query is given.' \
+      'Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def port(port, query = 'name:*')
-    Bunka.port(port, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+    Bunka.port(port, query, options[:timeout], options[:'print-success'],
+               options[:invert], options[:sequential], options[:threads],
+               options[:'from-file'])
   end
 
   map '-s' => :service
-  desc 'service NAME [QUERY]', 'Test if specific service is running on nodes, scoped on the given query if query is given. Query syntax should be the same as `knife search` syntax.'
-  option :sequential, type: :boolean, desc: 'run over nodes sequantially', default: false
-  option :invert, type: :boolean, desc: 'invert matched results', default: false
-  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection (default: 15)', default: 15
-  option :threads, type: :numeric, desc: 'number of threads (default: 15)', default: 15
-  option :'print-success', type: :boolean, desc: 'prints output of successful commands', default: false
-  option :'from-file', type: :string, desc: 'path to file with list of servers', default: nil
+  desc 'service NAME [QUERY]', 'Test if specific service is running' \
+    'on nodes, scoped on the given query if query is given.' \
+      'Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
   def service(name, query = 'name:*')
-    Bunka.service(name, query, options[:timeout], options[:'print-success'], options[:invert], options[:sequential], options[:threads], options[:'from-file'])
+    Bunka.service(name, query, options[:timeout], options[:'print-success'],
+                  options[:invert], options[:sequential], options[:threads],
+                  options[:'from-file'])
   end
 end
 
