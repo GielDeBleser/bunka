@@ -2,6 +2,15 @@ require 'net/ssh'
 
 class Bunka
   class << self
+    def parallel_exec
+      start = Time.now
+      Parallel.map(nodes, in_threads: @threads) do |fqdn|
+        execute_query fqdn
+      end
+      print_summary
+      puts Time.now - start
+    end
+
     def nodes
       if @file
         File.readlines(@file).collect(&:strip)
@@ -12,7 +21,8 @@ class Bunka
 
     def execute_query(fqdn)
       timeout @timeout_interval do
-        Net::SSH.start(fqdn, 'root', paranoid: false, forward_agent: true) do |ssh|
+        Net::SSH.start(fqdn, 'root', paranoid: false,
+                                     forward_agent: true) do |ssh|
           output = ssh_exec!(ssh, @command)
           parse_output output, fqdn
         end

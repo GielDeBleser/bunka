@@ -7,7 +7,8 @@ require 'bunka/socket'
 
 class Bunka
   class << self
-    def test(command, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def test(command, query, timeout_interval, verbose_success,
+             invert, sequential, threads, file = nil)
       @command = command
       @invert = invert
       @query = query
@@ -16,15 +17,12 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
+      parallel_exec
     end
 
-    def testserverspec(serverspecfile, query, timeout_interval, verbose_success, invert, sequential, processes, file)
+    def testserverspec(serverspecfile, query, timeout_interval,
+                       verbose_success, invert, sequential,
+                       processes, file)
       @serverspecfile = File.expand_path(serverspecfile)
       @query = query
       @invert = invert
@@ -46,7 +44,8 @@ class Bunka
       puts Time.now - start
     end
 
-    def findfile(path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def findfile(path, query, timeout_interval, verbose_success,
+                 invert, sequential, threads, file = nil)
       @command = "find . -name '#{path}' | egrep '.*'"
       @invert = invert
       @query = query
@@ -55,32 +54,11 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
+      parallel_exec
     end
 
-    def removefile(path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
-      @command = "rm -r '#{path}'"
-      @invert = invert
-      @query = query
-      @sequential = sequential
-      @threads = sequential ? 1 : threads
-      @timeout_interval = timeout_interval
-      @verbose_success = verbose_success
-      @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
-    end
-
-    def md5sum(path, checksum, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def md5sum(path, checksum, query, timeout_interval, verbose_success,
+               invert, sequential, threads, file = nil)
       @command = "md5sum -c - <<<'#{checksum}  #{path}'"
       @invert = invert
       @query = query
@@ -89,32 +67,11 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
+      parallel_exec
     end
 
-    def chmod(permissions, path, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
-      @command = "chmod #{permissions} #{path}"
-      @invert = invert
-      @query = query
-      @sequential = sequential
-      @threads = sequential ? 1 : threads
-      @timeout_interval = timeout_interval
-      @verbose_success = verbose_success
-      @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
-    end
-
-    def port(port, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def port(port, query, timeout_interval, verbose_success,
+             invert, sequential, threads, file = nil)
       @command = "netstat -anp |grep ':#{port}'"
       @invert = invert
       @query = query
@@ -123,15 +80,11 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
+      parallel_exec
     end
 
-    def service(name, query, timeout_interval, verbose_success, invert, sequential, threads, file = nil)
+    def service(name, query, timeout_interval, verbose_success,
+                invert, sequential, threads, file = nil)
       @command = "service #{name} status"
       @invert = invert
       @query = query
@@ -140,12 +93,7 @@ class Bunka
       @timeout_interval = timeout_interval
       @verbose_success = verbose_success
       @file = file ? File.expand_path(file) : nil
-
-      Parallel.map(nodes, in_threads: @threads) do |fqdn|
-        execute_query fqdn
-      end
-
-      print_summary
+      parallel_exec
     end
   end
 end
