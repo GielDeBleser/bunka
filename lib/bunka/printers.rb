@@ -66,7 +66,8 @@ class Bunka
 
     def specinvert
       return unless invert?
-      @dummyarray, @failedarray, @successarray = @failedarray, @successarray, @dummyarray
+      @dummyarray, @failedarray = @failedarray, @successarray
+      @successarray = @dummyarray
       @dummyint = @failed
       @failed = @success
       @success =  @dummyint
@@ -87,7 +88,7 @@ class Bunka
 
     def print_spec_output
       if !verbose_success?
-        puts "\n\nErrors: ".red
+        puts "\n\nFailures: ".red
       else
         puts "\n\nSuccesses: ".green
       end

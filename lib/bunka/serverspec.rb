@@ -5,29 +5,37 @@ require 'socket'
 class Bunka
   class << self
     def serverspecsetup
-      check_serverfile_existence
-      check_serverspecfile_existence
+      file_existence
       @hosts.each_slice(@processes).each do |h|
         Parallel.map(h, in_processes: @processes) do |hostx|
-          rspec_config
           ENV['TARGET_HOST'] = hostx
           @hostx = hostx
-          config
-          formatter
-          # create reporter with json formatter
-          reporter
-          config.instance_variable_set(:@reporter, reporter)
-          # internal hack
-          # api may not be stable, make sure lock down Rspec version
-          loader
-          notifications
-          reporter.register_listener(formatter, *notifications)
-          run_tests
-          @hash = formatter.output_hash
+          rspecrunner
           RSpec.clear_examples
           testresults_to_sockets unless @timedoutbool == true
         end
       end
+    end
+
+    def file_existence
+      check_serverfile_existence
+      check_serverspecfile_existence
+    end
+
+    def rspecrunner
+      rspec_config
+      config
+      formatter
+      # create reporter with json formatter
+      reporter
+      config.instance_variable_set(:@reporter, reporter)
+      # internal hack
+      # api may not be stable, make sure lock down Rspec version
+      loader
+      notifications
+      reporter.register_listener(formatter, *notifications)
+      run_tests
+      hash
     end
 
     def hash
@@ -86,9 +94,6 @@ class Bunka
         end
       elsif @query
         @hosts = knife_search @query
-      else
-        puts 'Wrong querry'
-        exit
       end
     end
 
