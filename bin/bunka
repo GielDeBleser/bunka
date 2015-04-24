@@ -49,7 +49,7 @@ class BunkaCommand < Thor
   end
 
   map '-f' => :file
-  desc 'file (-f) PATH [QUERY]', 'Test existence of a file or directory' \
+  desc 'file (-f) PATH [QUERY]', 'Test existence of a file' \
     ' on nodes, scoped on the given query if query is given.' \
       ' Query syntax should be the same as `knife search` syntax.'
   option :sequential, type: :boolean, desc: 'run over nodes sequantially',
@@ -70,6 +70,28 @@ class BunkaCommand < Thor
                    options[:'from-file'])
   end
 
+  map '-d' => :dir
+  desc 'dir (-d) PATH [QUERY]', 'Test existence of a directory' \
+    ' on nodes, scoped on the given query if query is given.' \
+      ' Query syntax should be the same as `knife search` syntax.'
+  option :sequential, type: :boolean, desc: 'run over nodes sequantially',
+                      default: false
+  option :invert, type: :boolean, desc: 'invert matched results',
+                  default: false
+  option :timeout, type: :numeric, desc: 'timeout interval per ssh connection',
+                   default: 15
+  option :threads, type: :numeric, desc: 'number of threads',
+                   default: 15
+  option :'print-success', type: :boolean, desc: 'prints output of' \
+    'successful commands', default: false
+  option :'from-file', type: :string, desc: 'path to file with list of' \
+    'servers', default: nil
+  def dir(path, query = 'name:*')
+    Bunka.finddir(path, query, options[:timeout], options[:'print-success'],
+                   options[:invert], options[:sequential], options[:threads],
+                   options[:'from-file'])
+  end
+  
   map '-md5' => :md5sum
   desc 'md5sum (-md5) PATH MD5SUM [QUERY]', 'Compare a MD5sum with a' \
     ' MD5sum of a file on nodes, scoped on the given query if query' \
