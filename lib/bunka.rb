@@ -46,7 +46,7 @@ class Bunka
 
     def findfile(path, query, timeout_interval, verbose_success,
                  invert, sequential, threads, file = nil)
-      @command = "find . -name '#{path}' | egrep '.*'"
+      @command = "test -f '#{path}'"
       @invert = invert
       @query = query
       @sequential = sequential
@@ -57,6 +57,19 @@ class Bunka
       parallel_exec
     end
 
+    def finddir(path, query, timeout_interval, verbose_success,
+                 invert, sequential, threads, file = nil)
+      @command = "test -d '#{path}'"
+      @invert = invert
+      @query = query
+      @sequential = sequential
+      @threads = sequential ? 1 : threads
+      @timeout_interval = timeout_interval
+      @verbose_success = verbose_success
+      @file = file ? File.expand_path(file) : nil
+      parallel_exec
+    end
+    
     def md5sum(path, checksum, query, timeout_interval, verbose_success,
                invert, sequential, threads, file = nil)
       @command = "md5sum -c - <<<'#{checksum}  #{path}'"
